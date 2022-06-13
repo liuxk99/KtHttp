@@ -48,8 +48,8 @@ object KtHttpV2 {
             ?.let { gson.fromJson(it, method.genericReturnType) }
 
     private fun parseUrl(acc: String, pair: Pair<Array<Annotation>, Any>): String {
-//        println(pair.toString())
-        return pair.first.filterIsInstance<GET>()
+        println("parseUrl($acc, pair(${pair.first}, ${pair.second}))")
+        return pair.first.filterIsInstance<Field>()
             .first()
             .let { field ->
                 if (acc.contains("?")) {
