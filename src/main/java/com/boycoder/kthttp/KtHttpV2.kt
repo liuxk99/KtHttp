@@ -22,7 +22,7 @@ object KtHttpV2 {
 
     var baseUrl = "https://trendings.herokuapp.com"
 
-    inline fun < reified T> create(): T {
+    inline fun <reified T> create(): T {
 
         // 调用 Proxy.newProxyInstance 就可以创建接口的实例化对象
         return Proxy.newProxyInstance(
@@ -31,7 +31,7 @@ object KtHttpV2 {
         ) { proxy, method, args ->
             return@newProxyInstance method.annotations
                 .filterIsInstance<GET>()
-                .takeIf {it.size == 1}
+                .takeIf { it.size == 1 }
                 ?.let {
                     invoke("$baseUrl${it[0].value}", method, args)
                 }
@@ -41,7 +41,10 @@ object KtHttpV2 {
     fun invoke(url: String, method: Method, args: Array<Any>): Any? =
         method.parameterAnnotations
             .takeIf { method.parameterAnnotations.size == args.size }
-            ?.mapIndexed { index, it -> Pair(it, args[index]) }
+            ?.mapIndexed { index, it ->
+                println("$index, $it")
+                Pair(it, args[index])
+            }
             ?.fold(url, ::parseUrl)
             ?.let { Request.Builder().url(it).build() }
             ?.let { okHttpClient.newCall(it).execute().body?.string() }
